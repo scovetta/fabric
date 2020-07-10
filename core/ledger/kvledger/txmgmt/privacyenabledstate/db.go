@@ -113,11 +113,6 @@ func (p *DBProvider) Close() {
 	p.VersionedDBProvider.Close()
 }
 
-// Drop drops channel-specific data from the statedb
-func (p *DBProvider) Drop(ledgerid string) error {
-	return p.VersionedDBProvider.Drop(ledgerid)
-}
-
 // DB uses a single database to maintain both the public and private data
 type DB struct {
 	statedb.VersionedDB
@@ -431,7 +426,9 @@ func getIndexInfo(indexPath string) *indexInfo {
 		indexInfo.hasIndexForChaincode = true
 	case len(dirsDepth) > collectionDirDepth &&
 		dirsDepth[collectionDirDepth] == "collections" &&
-		dirsDepth[collectionIndexDirDepth] == "indexes":
+		len(dirsDepth) > collectionIndexDirDepth &&
+		dirsDepth[collectionIndexDirDepth] == "indexes" &&
+		len(dirsDepth) > collectionNameDepth:
 		indexInfo.hasIndexForCollection = true
 		indexInfo.collectionName = dirsDepth[collectionNameDepth]
 	}
